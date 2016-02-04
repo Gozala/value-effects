@@ -1,0 +1,44 @@
+/* @flow */
+
+import type {Task} from "./task"
+
+export type Address <message>
+  = (input:message) =>
+  void
+
+export type Never = Never
+export type Time = number
+export type To <a, b> =
+  (input:a) => b
+
+export type Effects <a> =
+  { type: "Effects"
+  , map <b> (f:To<a, b>): Effects<b>
+  , toTask(address:Address<a>): Task<Never, void>
+  }
+
+declare export var none:Effects<any>
+
+declare export function task <a>
+  (task:Task<Never, a>):
+  Effects<a>
+
+declare export function tick <a>
+  (stamp: (time:Time) => a):
+  Effects<a>
+
+declare export function batch <a>
+  (effects:Array<Effects<a>>):
+  Effects<a>
+
+declare export function map <a, b>
+  ( f:(input:a) => b
+  , fx:Effects<a>
+  ):
+  Effects<b>
+
+declare export function toTask <a>
+  ( address: Address<a>
+  , fx: Effects<a>
+  ):
+  Task<Never, a>
